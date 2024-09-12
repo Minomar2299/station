@@ -1,7 +1,7 @@
 {
     "version":            "1.1",
     "project_name":       "wifi_station",
-    "project_version":    "15e9490-dirty",
+    "project_version":    "ea22438-dirty",
     "project_path":       "C:/Users/robin/Documents/EspressifProjects/station",
     "idf_path":           "C:/Users/robin/esp/v5.2/esp-idf",
     "build_dir":          "C:/Users/robin/Documents/EspressifProjects/station/build",

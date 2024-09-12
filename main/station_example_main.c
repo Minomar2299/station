@@ -1,4 +1,5 @@
 #include <string.h> // library for handling strings
+//checking commit
 #include <inttypes.h> // library for handling int
 //These next three lines generate delays, create tasks and event groups
 //freertos is used to easily design and develop a connected device and IoT applications
@@ -20,7 +21,7 @@
 #include "lwip/err.h"
 #include "lwip/sys.h"
 
-#include "esp_crt_bundle.h"
+#include "esp_crt_bundle.h"  
 #include "esp_tls.h"
 
 //#include "stdio.h"
@@ -35,6 +36,13 @@
 #include "sdkconfig.h"
 //#include "pretty_effect.h"
 
+//alot of these libraries are not essential, they are remains of attempts at connecting the lcd to the mcu
+
+//On the left side of display, pin2 is power(Vdd), pin 4 is RS(CS), pin5 is RW(SID), pin6 is E(SCLK), pin7 is SOD(DB0)
+//On esp32 RS goes to pin 29(IO5), SCLK goes to pin30(IO18), SOD goes to pin31(IO19), RW goes to pin37(IO23)
+
+#include "driver/uart.h"
+
 #include "cJson.h"
 
 /* The examples use WiFi configuration that you can set via project configuration menu
@@ -42,8 +50,8 @@
    If you'd rather not, just change the below entries to strings with
    the config you want - ie #define EXAMPLE_WIFI_SSID "mywifissid"
 */
-#define EXAMPLE_ESP_WIFI_SSID "Captains Quarters" //"TAMU_IoT" //CONFIG_ESP_WIFI_SSID
-#define EXAMPLE_ESP_WIFI_PASS "Gxd!TNM#Zys21" //""           //CONFIG_ESP_WIFI_PASSWORD
+#define EXAMPLE_ESP_WIFI_SSID "TAMU_IoT" //"Captains Quarters" //CONFIG_ESP_WIFI_SSID
+#define EXAMPLE_ESP_WIFI_PASS "" //"Gxd!TNM#Zys21"       //CONFIG_ESP_WIFI_PASSWORD
 #define EXAMPLE_ESP_MAXIMUM_RETRY  CONFIG_ESP_MAXIMUM_RETRY //max retries to connect
 //defines different security settings
 #if CONFIG_ESP_WPA3_SAE_PWE_HUNT_AND_PECK
@@ -150,6 +158,7 @@ void wifi_init_sta(void)
 
     //this API used to initialize and register event handlers for default interface (station in our case)
     //creates network interface instance binding wifi driver and tcp/ip stack
+    //Wifi driver is software that helps user devices find and connect to wireless connections
     //when station is in process of connecting to an access point, various processes get handling through this function
     esp_netif_create_default_wifi_sta();
 
@@ -215,7 +224,7 @@ void wifi_init_sta(void)
     /* xEventGroupWaitBits() returns the bits before the call returned, hence we can test which event actually
      * happened. */
     if (bits & WIFI_CONNECTED_BIT) {
-        ESP_LOGI(TAG, "connected to ap SSID:%s password:%s", //if esp32 connects to access point, prints it got connected to specific ssid and password
+        ESP_LOGI(TAG, "Connected to ap SSID:%s password:%s", //if esp32 connects to access point, prints it got connected to specific ssid and password
                  EXAMPLE_ESP_WIFI_SSID, EXAMPLE_ESP_WIFI_PASS);
     } else if (bits & WIFI_FAIL_BIT) {
         ESP_LOGI(TAG, "Failed to connect to SSID:%s, password:%s", //if esp32 doesnt connect, prints opposite
@@ -224,6 +233,7 @@ void wifi_init_sta(void)
         ESP_LOGE(TAG, "UNEXPECTED EVENT");
     }
 }
+
 
 void process_json(cJSON *item) {
     if (cJSON_IsObject(item)) {
@@ -244,6 +254,7 @@ void process_json(cJSON *item) {
         }
     }
 }
+
 
 
 //handles events that occur during the http requests
